@@ -1,12 +1,16 @@
 import React, { type FC, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useDebounceValue } from 'usehooks-ts';
 import 'material-design-icons-iconfont';
 
 import Page from 'components/Page';
 import Input from 'elements/emby-input/Input';
-import { useRealDebridSearch, CATEGORY_MOVIES, CATEGORY_TV } from 'apps/stable/features/realdebrid/api/useRealDebridSearch';
-import { useRealDebridStream } from 'apps/stable/features/realdebrid/api/useRealDebridStream';
-import RealDebridResults from 'apps/stable/features/realdebrid/components/RealDebridResults';
+import { useRealDebridSearch, CATEGORY_MOVIES, CATEGORY_TV } from 'apps/stable/features/streamhub/api/useRealDebridSearch';
+import { useRealDebridStream } from 'apps/stable/features/streamhub/api/useRealDebridStream';
+import { useTraktStatus } from 'apps/stable/features/streamhub/api/useTraktStatus';
+import RealDebridResults from 'apps/stable/features/streamhub/components/RealDebridResults';
+import TraktConnect from 'apps/stable/features/streamhub/components/TraktConnect';
+import TraktHistory from 'apps/stable/features/streamhub/components/TraktHistory';
 
 const SearchBar: FC<{
     query: string;
@@ -46,6 +50,7 @@ const RealDebridPage: FC = () => {
     const [streamingHash, setStreamingHash] = useState<string | null>(null);
     const [debouncedQuery] = useDebounceValue(query, 500);
 
+    const { data: traktStatus } = useTraktStatus();
     const { data = [], isPending, isError } = useRealDebridSearch(debouncedQuery, category);
     const streamMutation = useRealDebridStream();
 
@@ -84,13 +89,35 @@ const RealDebridPage: FC = () => {
                     />
                 </>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100dvh - 64px)' }}>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: 'calc(100dvh - 64px)',
+                    gap: '2em',
+                    padding: '0 1.5em'
+                }}>
                     <SearchBar
                         query={query}
                         category={category}
                         onQueryChange={setQuery}
                         onCategoryChange={setCategory}
                     />
+
+                    {traktStatus?.authenticated
+                        ? <TraktHistory onSearch={setQuery} />
+                        : <TraktConnect />
+                    }
+
+                    <Link
+                        to='/home'
+                        className='emby-button'
+                        style={{ width: '100%', maxWidth: '60em', textAlign: 'center', padding: '0.75em', fontSize: '0.95em' }}
+                    >
+                        <span className='material-icons' style={{ verticalAlign: 'middle', marginRight: '0.4em', fontSize: '1.2em' }}>video_library</span>
+                        Browse Your Library
+                    </Link>
                 </div>
             )}
         </Page>
