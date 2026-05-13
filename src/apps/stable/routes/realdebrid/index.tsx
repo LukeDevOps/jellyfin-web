@@ -1,10 +1,44 @@
 import React, { type FC, useState } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
+import 'material-design-icons-iconfont';
 
 import Page from 'components/Page';
+import Input from 'elements/emby-input/Input';
 import { useRealDebridSearch, CATEGORY_MOVIES, CATEGORY_TV } from 'apps/stable/features/realdebrid/api/useRealDebridSearch';
 import { useRealDebridStream } from 'apps/stable/features/realdebrid/api/useRealDebridStream';
 import RealDebridResults from 'apps/stable/features/realdebrid/components/RealDebridResults';
+
+const SearchBar: FC<{
+    query: string;
+    category: number;
+    onQueryChange: (q: string) => void;
+    onCategoryChange: (c: number) => void;
+}> = ({ query, category, onQueryChange, onCategoryChange }) => (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1em', width: '100%', maxWidth: '60em' }}>
+        <span className='material-icons search' aria-hidden='true' style={{ fontSize: '2em', marginBottom: '0.1em' }} />
+        <div className='inputContainer flex-grow' style={{ marginBottom: 0 }}>
+            <Input
+                id='rdSearchInput'
+                type='text'
+                placeholder='Search movies & TV shows...'
+                autoComplete='off'
+                maxLength={80}
+                value={query}
+                onChange={e => onQueryChange(e.target.value)}
+            />
+        </div>
+        <div className='selectContainer' style={{ minWidth: '8em', marginBottom: 0 }}>
+            <select
+                className='emby-select'
+                value={category}
+                onChange={e => onCategoryChange(Number(e.target.value))}
+            >
+                <option value={CATEGORY_MOVIES}>Movies</option>
+                <option value={CATEGORY_TV}>TV</option>
+            </select>
+        </div>
+    </div>
+);
 
 const RealDebridPage: FC = () => {
     const [query, setQuery] = useState('');
@@ -28,39 +62,35 @@ const RealDebridPage: FC = () => {
     return (
         <Page
             id='realDebridPage'
-            title='Real-Debrid Search'
+            title='Find Movies & TV'
             className='mainAnimatedPage libraryPage allLibraryPage noSecondaryNavPage'
         >
-            <div className='padded-left padded-right padded-top' style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
-                <input
-                    className='emby-input'
-                    type='search'
-                    placeholder='Search movies & TV...'
-                    value={query}
-                    onChange={e => setQuery(e.target.value)}
-                    style={{ flex: 1, maxWidth: '480px' }}
-                />
-                <select
-                    className='emby-select'
-                    value={category}
-                    onChange={e => setCategory(Number(e.target.value))}
-                >
-                    <option value={CATEGORY_MOVIES}>Movies</option>
-                    <option value={CATEGORY_TV}>TV</option>
-                </select>
-            </div>
-
             {debouncedQuery ? (
-                <RealDebridResults
-                    results={data}
-                    isPending={isPending}
-                    isError={isError}
-                    streamingHash={streamingHash}
-                    onStream={handleStream}
-                />
+                <>
+                    <div className='padded-left padded-right padded-top' style={{ display: 'flex', justifyContent: 'center' }}>
+                        <SearchBar
+                            query={query}
+                            category={category}
+                            onQueryChange={setQuery}
+                            onCategoryChange={setCategory}
+                        />
+                    </div>
+                    <RealDebridResults
+                        results={data}
+                        isPending={isPending}
+                        isError={isError}
+                        streamingHash={streamingHash}
+                        onStream={handleStream}
+                    />
+                </>
             ) : (
-                <div className='noItemsMessage centerMessage'>
-                    Search for a movie or TV show to find RD-cached streams.
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100dvh - 64px)' }}>
+                    <SearchBar
+                        query={query}
+                        category={category}
+                        onQueryChange={setQuery}
+                        onCategoryChange={setCategory}
+                    />
                 </div>
             )}
         </Page>

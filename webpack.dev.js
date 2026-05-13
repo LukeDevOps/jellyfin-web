@@ -19,6 +19,7 @@ module.exports = merge(common, {
     },
     devServer: {
         compress: true,
+        historyApiFallback: true,
         client: {
             overlay: {
                 errors: true,

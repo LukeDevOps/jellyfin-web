@@ -3,6 +3,7 @@ import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-ite
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import Favorite from '@mui/icons-material/Favorite';
+import Theaters from '@mui/icons-material/Theaters';
 import Button from '@mui/material/Button/Button';
 import Icon from '@mui/material/Icon';
 import { Theme } from '@mui/material/styles';
@@ -124,6 +125,16 @@ const UserViewNav = () => {
                 to='/home?tab=1'
             >
                 {globalize.translate(MetaView.Favorites.Name)}
+            </Button>
+
+            <Button
+                variant='text'
+                color={location.pathname === '/realdebrid' ? 'primary' : 'inherit'}
+                startIcon={<Theaters />}
+                component={Link}
+                to='/realdebrid'
+            >
+                Find Movies &amp; TV
             </Button>
 
             {webConfig.menuLinks?.map(link => (

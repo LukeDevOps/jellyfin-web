@@ -16,7 +16,7 @@ export const EXPERIMENTAL_APP_ROUTES: RouteObject[] = [
         path: '/*',
         lazy: () => import('../AppLayout'),
         children: [
-            { index: true, element: <Navigate replace to='/home' /> },
+            { index: true, element: <Navigate replace to='/realdebrid' /> },
 
             {
                 /* User routes */
