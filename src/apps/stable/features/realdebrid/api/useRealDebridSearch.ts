@@ -14,7 +14,7 @@ const fetchRealDebridSearch = async (
     signal?: AbortSignal
 ): Promise<DebridSearchResult[]> => {
     const response = await axiosInstance.get<DebridSearchResult[]>(
-        `${basePath}/RealDebrid/search`,
+        `${basePath}/StreamHub/search`,
         {
             params: { query, category },
             signal

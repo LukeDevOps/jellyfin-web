@@ -8,7 +8,7 @@ export const useRealDebridStream = () => {
     return useMutation({
         mutationFn: async (magnetUrl: string): Promise<StreamResponse> => {
             const response = await api!.axiosInstance.post<StreamResponse>(
-                `${api!.basePath}/RealDebrid/stream`,
+                `${api!.basePath}/StreamHub/stream`,
                 { magnetUrl }
             );
             return response.data;
