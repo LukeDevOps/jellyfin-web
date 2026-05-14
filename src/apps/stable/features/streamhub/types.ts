@@ -5,6 +5,7 @@ export interface DebridSearchResult {
     size: number;
     seeders: number;
     indexer: string;
+    quality: string;
 }
 
 export interface StreamResponse {
@@ -45,6 +46,12 @@ export interface TraktEpisode {
     season: number;
     number: number;
     title: string;
+}
+
+export interface TraktRecommendationItem {
+    title: string;
+    year: number;
+    ids: TraktIds;
 }
 
 export interface TraktHistoryItem {

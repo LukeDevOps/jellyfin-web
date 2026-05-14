@@ -22,12 +22,12 @@ const RealDebridResults: FC<Props> = ({ results, isPending, isError, streamingHa
 
     if (results.length === 0) return (
         <div className='noItemsMessage centerMessage'>
-            No RD-cached results found. Try a different search term.
+            No results found. Try a different search term.
         </div>
     );
 
     return (
-        <div className='itemsContainer vertical-wrap padded-left padded-right'>
+        <div style={{ maxWidth: '60em', margin: '0 auto', width: '100%', padding: '0 1em' }}>
             {results.map(result => (
                 <RealDebridResultCard
                     key={result.infoHash}

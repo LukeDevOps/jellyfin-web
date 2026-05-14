@@ -1,5 +1,4 @@
 import React, { type FC, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useDebounceValue } from 'usehooks-ts';
 import 'material-design-icons-iconfont';
 
@@ -11,6 +10,7 @@ import { useTraktStatus } from 'apps/stable/features/streamhub/api/useTraktStatu
 import RealDebridResults from 'apps/stable/features/streamhub/components/RealDebridResults';
 import TraktConnect from 'apps/stable/features/streamhub/components/TraktConnect';
 import TraktHistory from 'apps/stable/features/streamhub/components/TraktHistory';
+import TraktRecommendationRow from 'apps/stable/features/streamhub/components/TraktRecommendationRow';
 
 const SearchBar: FC<{
     query: string;
@@ -24,7 +24,7 @@ const SearchBar: FC<{
             <Input
                 id='rdSearchInput'
                 type='text'
-                placeholder='Search movies & TV shows...'
+                placeholder='Search movies & TV shows (in a nice way)...'
                 autoComplete='off'
                 maxLength={80}
                 value={query}
@@ -59,6 +59,8 @@ const RealDebridPage: FC = () => {
         try {
             const { url } = await streamMutation.mutateAsync(magnetUrl);
             window.open(url, '_blank');
+        } catch {
+            alert('Failed to get stream URL. This torrent may not be cached on Real-Debrid yet.');
         } finally {
             setStreamingHash(null);
         }
@@ -89,33 +91,22 @@ const RealDebridPage: FC = () => {
                     />
                 </>
             ) : (
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '1.5em',
-                    padding: '3em 1.5em 2em'
-                }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5em', padding: '3em 1.5em 2em' }}>
                     <SearchBar
                         query={query}
                         category={category}
                         onQueryChange={setQuery}
                         onCategoryChange={setCategory}
                     />
-
-                    {traktStatus?.authenticated
-                        ? <TraktHistory onSearch={setQuery} />
-                        : <TraktConnect />
-                    }
-
-                    <Link
-                        to='/home'
-                        className='emby-button'
-                        style={{ width: '100%', maxWidth: '60em', textAlign: 'center', padding: '0.75em', fontSize: '0.95em' }}
-                    >
-                        <span className='material-icons' style={{ verticalAlign: 'middle', marginRight: '0.4em', fontSize: '1.2em' }}>video_library</span>
-                        Browse Your Library
-                    </Link>
+                    {traktStatus?.authenticated ? (
+                        <>
+                            <TraktHistory onSearch={(q, cat) => { setQuery(q); setCategory(cat); }} />
+                            <TraktRecommendationRow type='movies' label='Recommended Movies' onSearch={(q, cat) => { setQuery(q); setCategory(cat); }} />
+                            <TraktRecommendationRow type='shows' label='Recommended Shows' onSearch={(q, cat) => { setQuery(q); setCategory(cat); }} />
+                        </>
+                    ) : (
+                        <TraktConnect />
+                    )}
                 </div>
             )}
         </Page>
