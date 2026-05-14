@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApi } from 'hooks/useApi';
+import { shGet } from './streamHubClient';
 import type { TraktHistoryItem } from '../types';
 
 export const useTraktHistory = (limit = 5, enabled = true) => {
@@ -7,13 +8,8 @@ export const useTraktHistory = (limit = 5, enabled = true) => {
 
     return useQuery({
         queryKey: ['StreamHub', 'trakt', 'history', limit],
-        queryFn: async (): Promise<TraktHistoryItem[]> => {
-            const response = await api!.axiosInstance.get<TraktHistoryItem[]>(
-                `${api!.basePath}/StreamHub/trakt/history`,
-                { params: { limit } }
-            );
-            return response.data;
-        },
+        queryFn: () =>
+            shGet<TraktHistoryItem[]>(api!, 'StreamHub/trakt/history', { params: { limit } }).then(r => r.data),
         enabled: !!api && enabled,
         staleTime: 1000 * 60 * 5
     });

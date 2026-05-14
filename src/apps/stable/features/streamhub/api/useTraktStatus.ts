@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useApi } from 'hooks/useApi';
+import { shGet } from './streamHubClient';
 import type { TraktAuthPollResponse } from '../types';
 
 export const useTraktStatus = () => {
@@ -7,12 +8,8 @@ export const useTraktStatus = () => {
 
     return useQuery({
         queryKey: ['StreamHub', 'trakt', 'status'],
-        queryFn: async () => {
-            const response = await api!.axiosInstance.get<TraktAuthPollResponse>(
-                `${api!.basePath}/StreamHub/trakt/status`
-            );
-            return response.data;
-        },
+        queryFn: () =>
+            shGet<TraktAuthPollResponse>(api!, 'StreamHub/trakt/status').then(r => r.data),
         enabled: !!api,
         staleTime: Infinity
     });

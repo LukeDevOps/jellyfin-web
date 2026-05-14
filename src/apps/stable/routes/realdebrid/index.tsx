@@ -93,10 +93,8 @@ const RealDebridPage: FC = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: 'calc(100dvh - 64px)',
-                    gap: '2em',
-                    padding: '0 1.5em'
+                    gap: '1.5em',
+                    padding: '3em 1.5em 2em'
                 }}>
                     <SearchBar
                         query={query}
